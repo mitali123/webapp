@@ -1,0 +1,32 @@
+version: 2.1
+jobs:
+  pr_check:
+    docker:
+      - image: circleci/node:12.16.3
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm test node_modules/mocha/bin/mocha ./tests
+  build:
+    docker:
+      - image: circleci/node:12.16.3
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm test node_modules/mocha/bin/mocha ./tests
+workflows:
+    pr_check_workflow:
+      jobs:
+        - pr_check:
+            filters:
+              branches:
+                only:
+                  - /^pull\/.*$/
+
+    build_deploy:
+      jobs:
+        - build:
+            filters:
+              branches:
+                only:
+                  - master
